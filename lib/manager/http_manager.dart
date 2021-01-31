@@ -25,9 +25,7 @@ class HttpManager{
   Dio get httpClient => _httpClient;
 
   //请求超时时间
-  final int _httpTimeOut = 10000;
-
-  get httpTimeOut => _httpTimeOut;
+  int httpTimeOut = 10000;
 
   static String baseUrl;
 
@@ -35,8 +33,8 @@ class HttpManager{
     _httpClient = Dio(
       BaseOptions()
         ..baseUrl = baseUrl
-        ..connectTimeout = _httpTimeOut
-        ..receiveTimeout = _httpTimeOut
+        ..connectTimeout = httpTimeOut
+        ..receiveTimeout = httpTimeOut
         ..headers = {"Connection": "keep-alive", 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate, br'}
     );
     _httpClient
@@ -131,7 +129,7 @@ class HttpManager{
       }
     }
     if(needRetry && retryTime>0){
-      Timer.periodic(Duration(milliseconds: _httpTimeOut + 500), (timer) async{
+      Timer.periodic(Duration(milliseconds: httpTimeOut + 500), (timer) async{
         if(retryTime > 0){
           Response tempResult = await _retryRequest(error.request.path, error.request.queryParameters, error.request.data, error.request.headers, error.request.method);
           if(tempResult != null){
