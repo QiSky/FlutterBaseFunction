@@ -113,7 +113,7 @@ class HttpManager{
 
   ///检查当前网络是否可用
   void _checkNetworkStatus(bool isShowNetworkAvailableToast,Function networkUnavailableCallBack) {
-    if (!ExportConfig.isNetworkConnected) {
+    if (!ExportConfig.instance.isNetworkConnected) {
       if (isShowNetworkAvailableToast) {
         if(networkUnavailableCallBack != null)
           networkUnavailableCallBack();

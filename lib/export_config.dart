@@ -1,16 +1,29 @@
 
 class ExportConfig{
 
-  static bool isNetworkConnected = true;
+  bool isNetworkConnected = true;
 
-  static String applicationName;
+  String applicationName;
 
-  static String packageName;
+  String packageName;
 
-  static String version;
+  String version;
 
-  static String buildNumber;
+  String buildNumber;
 
-  static Map<String,String> deviceInfoMap;
+  Map<String,dynamic> deviceInfoMap;
+
+  /// 单例
+  static ExportConfig _instance;
+
+  static ExportConfig get instance => _getInstance();
+
+  ExportConfig._internal();
+
+  static ExportConfig _getInstance(){
+    if(_instance == null)
+      _instance = ExportConfig._internal();
+    return _instance;
+  }
 
 }

@@ -1,7 +1,7 @@
 name: base_plugin
 description: Base Function Flutter plugin.
-version: 0.0.1
-author: skyqi
+version: 0.0.2
+#author: skyqi
 homepage: https://github.com/QiSky/FlutterBaseFunction.git
 
 environment:

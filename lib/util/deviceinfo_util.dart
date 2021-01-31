@@ -3,25 +3,24 @@ import 'dart:io';
 
 import 'package:base_plugin/export_config.dart';
 import 'package:device_info/device_info.dart';
-import 'package:flutter/services.dart';
 import 'package:package_info/package_info.dart';
 
 class DeviceInfoUtil {
-  final DeviceInfoPlugin _deviceInfoPlugin = DeviceInfoPlugin();
 
   Future<void> readDeviceInfo() async {
+    final DeviceInfoPlugin _deviceInfoPlugin = DeviceInfoPlugin();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    ExportConfig.applicationName = packageInfo.appName;
-    ExportConfig.packageName = packageInfo.packageName;
-    ExportConfig.buildNumber = packageInfo.buildNumber;
-    ExportConfig.version = packageInfo.version;
+    ExportConfig.instance.applicationName = packageInfo.appName;
+    ExportConfig.instance.packageName = packageInfo.packageName;
+    ExportConfig.instance.buildNumber = packageInfo.buildNumber;
+    ExportConfig.instance.version = packageInfo.version;
     try {
       if (Platform.isAndroid)
-        ExportConfig.deviceInfoMap = _readAndroidBuildData(await _deviceInfoPlugin.androidInfo);
+        ExportConfig.instance.deviceInfoMap = _readAndroidBuildData(await _deviceInfoPlugin.androidInfo);
       else if (Platform.isIOS)
-        ExportConfig.deviceInfoMap = _readIosDeviceInfo(await _deviceInfoPlugin.iosInfo);
-    } on PlatformException {
-      ExportConfig.deviceInfoMap = null;
+        ExportConfig.instance.deviceInfoMap = _readIosDeviceInfo(await _deviceInfoPlugin.iosInfo);
+    } catch(e) {
+      ExportConfig.instance.deviceInfoMap = null;
     }
   }
 

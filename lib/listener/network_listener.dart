@@ -5,9 +5,9 @@ class NetworkListener {
   NetworkListener() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       if (result == ConnectivityResult.wifi || result == ConnectivityResult.mobile)
-        ExportConfig.isNetworkConnected = true;
+        ExportConfig.instance.isNetworkConnected = true;
       else
-        ExportConfig.isNetworkConnected = false;
+        ExportConfig.instance.isNetworkConnected = false;
     });
   }
 }
