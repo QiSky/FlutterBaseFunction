@@ -33,9 +33,7 @@ class RouteManager{
     if(context != null)
       FocusScope.of(context).requestFocus(FocusNode());
     paramsMap[path] = bundle;
-    return router.navigateTo(
-        context, path,
-        replace: replace, clearStack: clearStack, transition: transition);
+    return router.navigateTo(context, path, replace: replace, clearStack: clearStack, transition: transition);
   }
 
   Future<dynamic> navigateToWithResult(BuildContext context, String path, {bool replace=false, bool clearStack=false,dynamic bundle, TransitionType transition = TransitionType.cupertino,Function resCallBack}) {
@@ -47,7 +45,8 @@ class RouteManager{
       // 页面返回result为null
       if (result == null)
         return;
-      resCallBack(result);
+      if(resCallBack != null)
+        resCallBack(result);
     }).catchError((error) {
       print("$error");
     });
