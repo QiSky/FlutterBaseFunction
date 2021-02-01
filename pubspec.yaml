@@ -1,6 +1,6 @@
 name: base_plugin
 description: Base Function Flutter plugin.
-version: 0.0.3
+version: 0.0.4
 #author: skyqi
 homepage: https://github.com/QiSky/FlutterBaseFunction.git
 
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   dio_http_cache: ^0.2.11
   connectivity: ^2.0.1
-  fluro: ^1.7.6
+  fluro: ^1.7.7
   dio: ^3.0.10
   pretty_dio_logger: ^1.1.1
   package_info: ^0.4.3
