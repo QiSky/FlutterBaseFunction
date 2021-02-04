@@ -12,7 +12,7 @@ class CacheUtil {
     return _instance;
   }
 
-  void clearCache({Function onComplete}) async {
+  void clearCache({Function onComplete, bool isDeleteImage = false}) async {
     try {
       Directory tempDir = await getTemporaryDirectory();
       await deleteDir(tempDir);
@@ -65,7 +65,7 @@ class CacheUtil {
       if (file is Directory) {
         final List<FileSystemEntity> children = file.listSync();
         for (final FileSystemEntity child in children) {
-          await deleteDir(child);
+          await deleteDir(child, isDeleteImage: isDeleteImage);
         }
       }else if(file is File){
         if(isDeleteImage){
