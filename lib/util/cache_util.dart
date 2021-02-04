@@ -1,14 +1,14 @@
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 class CacheUtil {
 
   static CacheUtil _instance;
 
   static CacheUtil getInstance(){
-    if(_instance==null)
-      _instance=CacheUtil();
+    if(_instance == null)
+      _instance = CacheUtil();
     return _instance;
   }
 
@@ -16,8 +16,9 @@ class CacheUtil {
     try {
       Directory tempDir = await getTemporaryDirectory();
       await deleteDir(tempDir);
+      await DefaultCacheManager().emptyCache();
     } finally {
-      if (onComplete != null) onComplete();
+      if (onComplete != null) onComplete('0.00B');
     }
   }
 
@@ -42,8 +43,7 @@ class CacheUtil {
     return size + unitArr[index];
   }
 
-  static Future<double> _getTotalSizeOfFilesInDir(
-      final FileSystemEntity file) async {
+  static Future<double> _getTotalSizeOfFilesInDir(final FileSystemEntity file) async {
     if (file is File) {
       int length = await file.length();
       return double.parse(length.toString());
@@ -60,14 +60,24 @@ class CacheUtil {
   }
 
   ///递归方式删除目录
-  Future<Null> deleteDir(FileSystemEntity file) async {
-    if (file is Directory) {
-      file.exists().then((value) async {
+  Future<Null> deleteDir(FileSystemEntity file, {bool isDeleteImage = false}) async {
+    try {
+      if (file is Directory) {
         final List<FileSystemEntity> children = file.listSync();
         for (final FileSystemEntity child in children) {
           await deleteDir(child);
         }
-      });
+      }else if(file is File){
+        if(isDeleteImage){
+          await file.delete();
+        }else{
+          if(!(file.path.contains(".jpg")||file.path.contains(".png")||file.path.contains(".webp"))){
+            await file.delete();
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }
