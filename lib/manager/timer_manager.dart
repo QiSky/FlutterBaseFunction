@@ -16,9 +16,7 @@ class TimerManager{
 
   ///启动单次定时器
   void startTimerOnce(Function timerCallBack){
-    Timer.run(() {
-      timerCallBack?.call();
-    });
+    Timer.run(() => timerCallBack?.call());
   }
 
   ///启动有间隔时间的多次定时器
@@ -35,7 +33,7 @@ class TimerManager{
       }));
       _timerMap[widget]=list;
     }else if(key!=null&&key.isNotEmpty){
-      assert(!_timerMap.containsKey(key));
+      // assert(!_timerMap.containsKey(key));
       _timerMap[key]=Timer.periodic(duration, (timer) {
         timerCallBack(timer,timer.tick);
       });
@@ -45,12 +43,11 @@ class TimerManager{
   void clearTimer(String timerName){
     if(_timerMap.containsKey(timerName)){
       var res=_timerMap[timerName];
-      if(res == null) {
+      if(res == null)
         return;
-      }
-      if(res is List<Timer>){
+      if(res is List<Timer>)
         autoRelease(timerName);
-      }else{
+      else{
         Timer timer= res as Timer;
         _timerMap?.remove(timerName);
         timer?.cancel();
