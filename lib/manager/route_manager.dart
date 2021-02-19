@@ -28,18 +28,30 @@ class RouteManager{
   ///路由栈管理
   List<String> routerStack = List();
 
-  Future<dynamic> navigateTo(BuildContext context, String path, {bool replace=false, bool clearStack=false,dynamic bundle, TransitionType transition = TransitionType.cupertino}) {
-    printRouteStack();
+  Future<dynamic> navigateTo(BuildContext context, String path, {bool replace = false, bool clearStack = false,dynamic bundle, TransitionType transition = TransitionType.cupertino}) {
+    if(clearStack)
+      routerStack.clear();
+    else{
+      if(replace)
+        routerStack.removeLast();
+    }
     if(context != null)
       FocusScope.of(context).requestFocus(FocusNode());
     paramsMap[path] = bundle;
+    printRouteStack();
     return router.navigateTo(context, path, replace: replace, clearStack: clearStack, transition: transition);
   }
 
-  Future<dynamic> navigateToWithResult(BuildContext context, String path, {bool replace=false, bool clearStack=false,dynamic bundle, TransitionType transition = TransitionType.cupertino,Function resCallBack}) {
-    printRouteStack();
+  Future<dynamic> navigateToWithResult(BuildContext context, String path, {bool replace = false, bool clearStack = false,dynamic bundle, TransitionType transition = TransitionType.cupertino,Function resCallBack}) {
+    if(clearStack)
+      routerStack.clear();
+    else{
+      if(replace)
+        routerStack.removeLast();
+    }
     FocusScope.of(context).requestFocus(FocusNode());
-    paramsMap[path]=bundle;
+    paramsMap[path] = bundle;
+    printRouteStack();
     return router.navigateTo(context, path, replace: replace, clearStack: clearStack, transition: transition)
         .then((result) {
       // 页面返回result为null
