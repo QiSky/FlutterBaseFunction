@@ -42,7 +42,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.8"
+    version: "0.0.9"
   boolean_selector:
     dependency: transitive
     description:
@@ -275,6 +275,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.16.1"
+  isolate:
+    dependency: transitive
+    description:
+      name: isolate
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.3"
   js:
     dependency: transitive
     description:
@@ -518,6 +525,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.8.0-nullsafety.2"
+  sprintf:
+    dependency: transitive
+    description:
+      name: sprintf
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.1.0"
   sqflite:
     dependency: transitive
     description:
