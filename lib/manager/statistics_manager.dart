@@ -61,10 +61,8 @@ class StatisticsManager{
   }
 
   ///初始化
-  ///如不输入包名，则自动获取
   Future<bool> init(String apiUrl,String identify, {StatisticSendType sendType = StatisticSendType.SINGLE,
     int sendDuration = 5000}) async{
-    assert(_balance == null);
     _balance = await LoadBalancer.create(3, IsolateRunner.spawn);
 
     _isActive = true;

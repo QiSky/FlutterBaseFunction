@@ -21,14 +21,14 @@ class StatisticsModel {
 
   Map<String, String> data = Map();
 
-  StatisticModel(String code) {
+  StatisticsModel(String code) {
     this.code = code ?? "";
     this.identify = StatisticsManager.getInstance().eventIdentify??"";
     DateTime dateTime = DateTime.now().toUtc();
     eventID = generateEventID();
     packageName = StatisticsManager.getInstance().packageName??"";
     packageVersion = StatisticsManager.getInstance().packageVersion??"";
-    this.createdTime = sprintf("%i-%02i-%02i'T'%02i:%02i:%02i.%i'Z'", [
+    this.createdTime = sprintf("%i-%02i-%02iT%02i:%02i:%02i.%iZ", [
       dateTime.year,
       dateTime.month,
       dateTime.day,

@@ -1,6 +1,6 @@
 name: base_plugin
 description: Base Function Flutter plugin.
-version: 0.1.0
+version: 0.1.1
 #author: skyqi
 homepage: https://github.com/QiSky/FlutterBaseFunction.git
 
@@ -22,7 +22,7 @@ dependencies:
   device_info: ^0.4.2+8
   flutter_cache_manager: ^2.1.1
   isolate: ^2.0.3
-  sprintf: ^4.0.0
+  sprintf: ^5.0.0
 
 dev_dependencies:
   flutter_test:

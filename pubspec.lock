@@ -517,7 +517,7 @@ packages:
       name: sprintf
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.1.0"
+    version: "5.0.0"
   sqflite:
     dependency: transitive
     description:

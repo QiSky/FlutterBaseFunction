@@ -3,7 +3,7 @@ import 'dart:async';
 
 class TimerManager{
   
-  Map<String,dynamic> _timerMap = {};
+  Map<String,dynamic> _timerMap = Map();
   
   /// 单例
   static TimerManager _instance;
@@ -34,7 +34,7 @@ class TimerManager{
       _timerMap[widget]=list;
     }else if(key!=null&&key.isNotEmpty){
       // assert(!_timerMap.containsKey(key));
-      _timerMap[key]=Timer.periodic(duration, (timer) {
+      _timerMap[key] = Timer.periodic(duration, (timer) {
         timerCallBack(timer,timer.tick);
       });
     }
@@ -42,13 +42,13 @@ class TimerManager{
 
   void clearTimer(String timerName){
     if(_timerMap.containsKey(timerName)){
-      var res=_timerMap[timerName];
+      var res = _timerMap[timerName];
       if(res == null)
         return;
       if(res is List<Timer>)
         autoRelease(timerName);
       else{
-        Timer timer= res as Timer;
+        Timer timer = res as Timer;
         _timerMap?.remove(timerName);
         timer?.cancel();
       }
@@ -59,6 +59,10 @@ class TimerManager{
     _timerMap.forEach((key, value) {
       print("Timer name:$key");
     });
+  }
+
+  bool hasTimer(String timerName){
+    return _timerMap?.containsKey(timerName);
   }
 
   ///根据widget名称自动释放定时器
