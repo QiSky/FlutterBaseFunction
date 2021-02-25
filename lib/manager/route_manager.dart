@@ -32,7 +32,7 @@ class RouteManager{
     if(clearStack)
       routerStack.clear();
     else{
-      if(replace)
+      if(replace && routerStack.isNotEmpty)
         routerStack.removeLast();
     }
     if(context != null)
@@ -46,7 +46,7 @@ class RouteManager{
     if(clearStack)
       routerStack.clear();
     else{
-      if(replace)
+      if(replace && routerStack.isNotEmpty)
         routerStack.removeLast();
     }
     FocusScope.of(context).requestFocus(FocusNode());
