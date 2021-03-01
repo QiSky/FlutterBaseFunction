@@ -18,6 +18,8 @@ class HttpManager{
   static const String _METHOD_DELETE="delete";
   static const String _METHOD_PUT="put";
 
+  static Map<String, HttpManager> _managerMap = Map();
+
   //网络请求
   static Dio _httpClient;
 
@@ -52,6 +54,33 @@ class HttpManager{
     if(_instance == null)
       _instance = HttpManager._internal();
     return _instance;
+  }
+
+  ///获取新的实例且进行存储
+  static HttpManager newInstance(String name){
+    assert(!_managerMap.containsKey(name));
+    HttpManager tempManager = HttpManager._internal();
+    _managerMap[name] = tempManager;
+    return tempManager;
+  }
+
+  ///删除存储的实例
+  static bool removeInstance(String name){
+    if(_managerMap.containsKey(name)){
+      _managerMap[name].httpClient.close();
+      _managerMap.remove(name);
+      return true;
+    } else
+      return false;
+  }
+
+  ///获取存储的实例（如不存在则将自动创建）
+  static HttpManager getStoreInstance(String name){
+    if(_managerMap.containsKey(name)){
+      return _managerMap[name];
+    }else{
+      return newInstance(name);
+    }
   }
 
   /// get请求

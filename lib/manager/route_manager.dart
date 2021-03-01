@@ -29,12 +29,6 @@ class RouteManager{
   List<String> routerStack = List();
 
   Future<dynamic> navigateTo(BuildContext context, String path, {bool replace = false, bool clearStack = false,dynamic bundle, TransitionType transition = TransitionType.cupertino}) {
-    if(clearStack)
-      routerStack.clear();
-    else{
-      if(replace && routerStack.isNotEmpty)
-        routerStack.removeLast();
-    }
     if(context != null)
       FocusScope.of(context).requestFocus(FocusNode());
     paramsMap[path] = bundle;
@@ -43,12 +37,6 @@ class RouteManager{
   }
 
   Future<dynamic> navigateToWithResult(BuildContext context, String path, {bool replace = false, bool clearStack = false,dynamic bundle, TransitionType transition = TransitionType.cupertino,Function resCallBack}) {
-    if(clearStack)
-      routerStack.clear();
-    else{
-      if(replace && routerStack.isNotEmpty)
-        routerStack.removeLast();
-    }
     FocusScope.of(context).requestFocus(FocusNode());
     paramsMap[path] = bundle;
     printRouteStack();
@@ -91,8 +79,8 @@ class RouteManager{
     return canPop;
   }
 
-  void printRouteStack(){
-    StringBuffer buffer = StringBuffer("Current Page Stacks:[");
+  void printRouteStack({String description = "Current Page Stacks:"}){
+    StringBuffer buffer = StringBuffer("$description[");
     routerStack.forEach((element)=> buffer.write("$element,"));
     buffer.write("]");
     print(buffer);

@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:base_plugin/export_config.dart';
 import 'package:base_plugin/manager/timer_manager.dart';
-import 'package:base_plugin/model/statistics/statistics_model.dart';
 import 'package:isolate/isolate_runner.dart';
 import 'package:isolate/load_balancer.dart';
 
@@ -34,17 +33,20 @@ class StatisticsManager{
   ///事件唯一识别码（根据此属性进行可视化识别）
   String _eventIdentify;
 
-  ///发送方式
-  StatisticSendType _sendType;
-
   ///数组发送状态下存储的List
-  List<StatisticsModel> _storeList;
+  List<dynamic> _storeList;
 
   ///目前发送器状态
   bool _isActive = false;
 
   ///数组发送状态下发送延迟
   int _sendDuration;
+
+  ///是否复用http实例
+  bool _isReuse = true;
+
+  ///新的Http实例
+  HttpManager _newHttpManager;
 
   String get packageName => _packageName;
 
@@ -61,29 +63,36 @@ class StatisticsManager{
   }
 
   ///初始化
-  Future<bool> init(String apiUrl,String identify, {StatisticSendType sendType = StatisticSendType.SINGLE,
-    int sendDuration = 5000}) async{
+  ///@apiUrl 子地址
+  ///@identify 标记
+  ///@isNewAddress 是否复用当前的全局http请求
+  ///@newHttpManagerCallBack 当isNewAddress为false生效，回调将返回新的HttpManager实例进行设置
+  ///@sendDuration 多项发送间隔
+  Future<bool> init(String apiUrl,String identify, {bool isReuse = true,
+    Function newHttpManagerCallBack, int sendDuration = 5000}) async{
+    assert((!isReuse && newHttpManagerCallBack != null)||(isReuse && newHttpManagerCallBack == null));
     _balance = await LoadBalancer.create(3, IsolateRunner.spawn);
 
+    if(!_isReuse){
+      _newHttpManager = HttpManager.newInstance("statistic_instance");
+      newHttpManagerCallBack(_newHttpManager);
+    }
+
+    _isReuse = isReuse;
     _isActive = true;
     _eventIdentify = identify;
 
     _packageName = ExportConfig.instance.packageName??"";
     _packageVersion = ExportConfig.instance.version??"";
 
-    _sendType = sendType;
     _apiUrl = apiUrl;
     _sendDuration = sendDuration;
 
-    if(sendType == StatisticSendType.ARRAY){
-      assert(sendDuration > 0);
-      _storeList = List();
-    }
+    _storeList = List<dynamic>();
 
     _start();
     return true;
   }
-
 
   void _start(){
     TimerManager.getInstance().startTimer((timer,tick){
@@ -92,25 +101,31 @@ class StatisticsManager{
   }
 
   void _sendArrayEvent(){
-    _balance.run<void,List<StatisticsModel>>(sendArrayEvent, _storeList);
+    _balance.run<void,List<dynamic>>(sendArrayEvent, _storeList);
   }
 
   ///发送事件
-  void sendEvent(StatisticsModel event){
+  void sendEvent(dynamic event, {StatisticSendType sendType = StatisticSendType.SINGLE}){
     if(_isActive){
-      if(_sendType == StatisticSendType.ARRAY)
+      if(sendType == StatisticSendType.ARRAY)
         _storeList.add(event);
       else
-        _balance.run<void,StatisticsModel>(sendSingleEvent, event);
+        _balance.run<void,dynamic>(sendSingleEvent, event);
     }
   }
 
-  void sendSingleEvent(StatisticsModel argument){
-    HttpManager.instance.postRequest(_apiUrl, data: argument);
+  void sendSingleEvent(dynamic argument){
+    if(!_isReuse)
+      _newHttpManager.postRequest(_apiUrl, data: argument);
+    else
+      HttpManager.instance.postRequest(_apiUrl, data: argument);
   }
 
-  void sendArrayEvent(List<StatisticsModel> argument){
-    HttpManager.instance.postRequest(_apiUrl, data: jsonEncode(argument));
+  void sendArrayEvent(List<dynamic> argument){
+    if(!_isReuse)
+      _newHttpManager.postRequest(_apiUrl, data: jsonEncode(argument));
+    else
+      HttpManager.instance.postRequest(_apiUrl, data: jsonEncode(argument));
     argument.clear();
   }
 
