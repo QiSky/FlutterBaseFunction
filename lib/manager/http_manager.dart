@@ -18,8 +18,6 @@ class HttpManager{
   static const String _METHOD_DELETE="delete";
   static const String _METHOD_PUT="put";
 
-  static Map<String, HttpManager> _managerMap = Map();
-
   //网络请求
   static Dio _httpClient;
 
@@ -32,13 +30,12 @@ class HttpManager{
   static String baseUrl;
 
   HttpManager._internal(){
-    _httpClient = Dio(
-      BaseOptions()
-        ..baseUrl = baseUrl
-        ..connectTimeout = httpTimeOut
-        ..receiveTimeout = httpTimeOut
-        ..headers = {"Connection": "keep-alive", 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate, br'}
-    );
+    _httpClient = Dio();
+    _httpClient.options
+      ..baseUrl = baseUrl
+      ..connectTimeout = httpTimeOut
+      ..receiveTimeout = httpTimeOut
+      ..headers = {"Connection": "keep-alive", 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate, br'};
     _httpClient
       ..interceptors.add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor)
       ..interceptors.add(PrettyDioLogger(
@@ -54,33 +51,6 @@ class HttpManager{
     if(_instance == null)
       _instance = HttpManager._internal();
     return _instance;
-  }
-
-  ///获取新的实例且进行存储
-  static HttpManager newInstance(String name){
-    assert(!_managerMap.containsKey(name));
-    HttpManager tempManager = HttpManager._internal();
-    _managerMap[name] = tempManager;
-    return tempManager;
-  }
-
-  ///删除存储的实例
-  static bool removeInstance(String name){
-    if(_managerMap.containsKey(name)){
-      _managerMap[name].httpClient.close();
-      _managerMap.remove(name);
-      return true;
-    } else
-      return false;
-  }
-
-  ///获取存储的实例（如不存在则将自动创建）
-  static HttpManager getStoreInstance(String name){
-    if(_managerMap.containsKey(name)){
-      return _managerMap[name];
-    }else{
-      return newInstance(name);
-    }
   }
 
   /// get请求
@@ -198,7 +168,7 @@ class HttpManager{
   }
 
   ///基础请求
-  static Future<Response> _request(String url, String method, {Map<String, Object> params, Map<String, dynamic> headers, dynamic data,Function errorCallback}) async {
+  Future<Response> _request(String url, String method, {Map<String, Object> params, Map<String, dynamic> headers, dynamic data,Function errorCallback}) async {
     Response response;
     try {
       if (headers != null)
@@ -213,6 +183,7 @@ class HttpManager{
           response = await _httpClient?.get(url);
           break;
         case _METHOD_POST:
+          print("基础url:${_httpClient.options.baseUrl}");
           if (params != null && params.isNotEmpty)
             response = await _httpClient?.post(url, queryParameters: params);
           else if (data != null)

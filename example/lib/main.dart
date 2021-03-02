@@ -1,3 +1,10 @@
+import 'dart:convert';
+
+import 'package:base_plugin/listener/router_listener.dart';
+import 'package:base_plugin/manager/route_manager.dart';
+import 'package:base_plugin_example/page/example1.dart';
+import 'package:base_plugin_example/page/example2.dart';
+import 'package:base_plugin_example/page/example3.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,7 +17,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+
+  final routerListener = RouterListener();
 
   @override
   void initState() {
@@ -20,14 +28,10 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
-      ),
+      onGenerateRoute: RouteManager.instance.router.generator,
+      initialRoute: "/example1",
+      debugShowCheckedModeBanner: false,
+      navigatorObservers: [routerListener]
     );
   }
 }

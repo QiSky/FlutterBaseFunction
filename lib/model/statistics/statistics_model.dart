@@ -1,9 +1,10 @@
 import 'dart:math';
 
-import 'package:base_plugin/manager/statistics_manager.dart';
+import 'package:base_plugin/export_config.dart';
 import 'package:sprintf/sprintf.dart';
 
 class StatisticsModel {
+
   ///必须继承字段
   String action = "";
 
@@ -23,11 +24,10 @@ class StatisticsModel {
 
   StatisticsModel(String code) {
     this.code = code ?? "";
-    this.identify = StatisticsManager.getInstance().eventIdentify??"";
     DateTime dateTime = DateTime.now().toUtc();
     eventID = generateEventID();
-    packageName = StatisticsManager.getInstance().packageName??"";
-    packageVersion = StatisticsManager.getInstance().packageVersion??"";
+    packageName = ExportConfig.instance.packageName??"";
+    packageVersion = ExportConfig.instance.version??"";
     this.createdTime = sprintf("%i-%02i-%02iT%02i:%02i:%02i.%iZ", [
       dateTime.year,
       dateTime.month,
@@ -69,11 +69,11 @@ class StatisticsModel {
     return {
       "code": code,
       "action": action??"",
-      "createdTime":createdTime,
-      "eventID":eventID,
-      "packageName":packageName??"",
-      "packageVersion":packageVersion??"",
-      "identify":identify??"",
+      "createdTime": createdTime,
+      "eventID": eventID,
+      "packageName": packageName??"",
+      "packageVersion": packageVersion??"",
+      "identify": identify??"",
       "data": data
     };
   }
