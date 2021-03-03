@@ -12,7 +12,7 @@ class SPUtil {
     if (data is List<String>) _prefs.setStringList(key, data);
   }
 
-  static Future<dynamic> getData(String key) {
+  static dynamic getData(String key) {
     assert(_prefs != null);
     if (_prefs.containsKey(key))
       return _prefs.get(key);

@@ -39,10 +39,8 @@ void _sendSingleEvent(Map<String,dynamic> argument){
 void _sendArrayEvent(Map<String,dynamic> argument){
   List<dynamic> data = argument["data"];
   String url = argument["url"];
-  if(argument.isNotEmpty){
+  if(data.isNotEmpty)
     HttpManager.instance.postRequest(url, data: jsonEncode(data));
-    argument.clear();
-  }
 }
 
 class StatisticsManager{
@@ -77,7 +75,7 @@ class StatisticsManager{
   ///初始化
   ///@apiUrl 子地址
   ///@sendDuration 多项发送间隔
-  Future<bool> init(String apiUrl, {int sendDuration = 5000}) async{
+  Future<bool> init(String apiUrl, {int sendDuration = 5}) async{
     _balance = await LoadBalancer.create(3, IsolateRunner.spawn);
 
     _isActive = true;
@@ -92,10 +90,14 @@ class StatisticsManager{
   }
 
   void _start(){
-    TimerManager.getInstance().startTimer((timer,tick){
-      _balance.run<void, Map<String,dynamic>>(_sendArrayEvent, {
+    TimerManager.getInstance().startTimer((timer,tick) async{
+      print("触发");
+      await _balance.run<void, Map<String,dynamic>>(_sendArrayEvent, {
         "data": _storeList , "url": _apiUrl
       });
+      _storeList.clear();
+      TimerManager.getInstance().clearTimer(STATISTIC_TIMER);
+      _start();
     }, duration: Duration(seconds: _sendDuration), key: STATISTIC_TIMER);
   }
 

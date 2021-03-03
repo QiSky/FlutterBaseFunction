@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:base_plugin/export_config.dart';
+import 'package:base_plugin/util/sp_util.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 /// 请求管理
@@ -15,8 +15,8 @@ class HttpManager{
 
   static const String _METHOD_GET = "get";
   static const String _METHOD_POST = "post";
-  static const String _METHOD_DELETE="delete";
-  static const String _METHOD_PUT="put";
+  static const String _METHOD_DELETE = "delete";
+  static const String _METHOD_PUT = "put";
 
   //网络请求
   static Dio _httpClient;
@@ -24,21 +24,15 @@ class HttpManager{
   ///暴露给外部的网络请求变量
   Dio get httpClient => _httpClient;
 
-  //请求超时时间
-  int httpTimeOut = 10000;
-
-  static String baseUrl;
+  int httpTimeout = 12000;
 
   HttpManager._internal(){
     _httpClient = Dio();
     _httpClient.options
-      ..baseUrl = baseUrl
-      ..connectTimeout = httpTimeOut
-      ..receiveTimeout = httpTimeOut
+      ..connectTimeout = httpTimeout
+      ..receiveTimeout = httpTimeout
       ..headers = {"Connection": "keep-alive", 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate, br'};
-    _httpClient
-      ..interceptors.add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor)
-      ..interceptors.add(PrettyDioLogger(
+    _httpClient.interceptors.add(PrettyDioLogger(
           requestHeader: true,
           requestBody: true,
           responseBody: true,
@@ -55,7 +49,7 @@ class HttpManager{
 
   /// get请求
   /// 通用参数描述:
-  /// url:请求地址（不包含基地址）
+  /// url:请求地址
   /// [params]: FormData类型数据(get请求将自动转换成urlEncode)
   /// [data]: RequestBody类型数据
   /// [headers]: 请求头
@@ -128,7 +122,7 @@ class HttpManager{
       }
     }
     if(needRetry && retryTime>0){
-      Timer.periodic(Duration(milliseconds: httpTimeOut + 500), (timer) async{
+      Timer.periodic(Duration(milliseconds: SPUtil.getData("http_base_url") + 500), (timer) async{
         if(retryTime > 0){
           Response tempResult = await _retryRequest(error.request.path, error.request.queryParameters, error.request.data, error.request.headers, error.request.method);
           if(tempResult != null){
@@ -183,13 +177,12 @@ class HttpManager{
           response = await _httpClient?.get(url);
           break;
         case _METHOD_POST:
-          print("基础url:${_httpClient.options.baseUrl}");
           if (params != null && params.isNotEmpty)
-            response = await _httpClient?.post(url, queryParameters: params);
+            response = await _httpClient.post(url, queryParameters: params);
           else if (data != null)
-            response = await _httpClient?.post(url, data: data);
+            response = await _httpClient.post(url, data: data);
           else
-            response = await _httpClient?.post(url);
+            response = await _httpClient.post(url);
           break;
         case _METHOD_DELETE:
           if (params != null && params.isNotEmpty)
