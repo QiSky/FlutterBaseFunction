@@ -91,11 +91,12 @@ class StatisticsManager{
 
   void _start(){
     TimerManager.getInstance().startTimer((timer,tick) async{
-      print("触发");
-      await _balance.run<void, Map<String,dynamic>>(_sendArrayEvent, {
-        "data": _storeList , "url": _apiUrl
-      });
-      _storeList.clear();
+      if(_storeList.isNotEmpty){
+        await _balance.run<void, Map<String,dynamic>>(_sendArrayEvent, {
+          "data": _storeList , "url": _apiUrl
+        });
+        _storeList.clear();
+      }
       TimerManager.getInstance().clearTimer(STATISTIC_TIMER);
       _start();
     }, duration: Duration(seconds: _sendDuration), key: STATISTIC_TIMER);
